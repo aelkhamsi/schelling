@@ -5,8 +5,7 @@ from bcolors import bcolors
 
 SIZE=20
 threshold=50  #treschold
-# Schelling segregation
-# Pop1 / Pop2 : 50%/50%
+ratio=0.5
 
 map = np.zeros((SIZE, SIZE), dtype='int')
 
@@ -49,52 +48,47 @@ def findEmptySpace(map):
         if (map[x, y] == 0):
             return (x, y)
 
-#Place Population 1 in the map
-for i in range(125):
-    flag=False
-    while(not flag):
-        x = np.random.randint(SIZE)
-        y = np.random.randint(SIZE)
-        if (map[x, y] == 0):
-            map[x, y] = 1
-            flag=True
+try:
+    ratio = float(sys.argv[2])
+except:
+    pass
+finally:
+    #Place Population 1 in the map
+    for i in range(int(250*ratio)):
+        flag=False
+        while(not flag):
+            x = np.random.randint(SIZE)
+            y = np.random.randint(SIZE)
+            if (map[x, y] == 0):
+                map[x, y] = 1
+                flag=True
 
-#Place Population 2 in the map
-for i in range(125):
-    flag=False
-    while(not flag):
-        x = np.random.randint(SIZE)
-        y = np.random.randint(SIZE)
-        if (map[x, y] == 0):
-            map[x, y] = 2
-            flag=True
+    #Place Population 2 in the map
+    for i in range(int(250*(1-ratio))):
+        flag=False
+        while(not flag):
+            x = np.random.randint(SIZE)
+            y = np.random.randint(SIZE)
+            if (map[x, y] == 0):
+                map[x, y] = 2
+                flag=True
 
 #main
 try:
     threshold = float(sys.argv[1])
 except:
     print("""
-    Please pass the tolerance threshold as an argument
+    usage: python3 schelling.py [t] [ratio]
 
-    For example:
-        python3 schelling.py 50
+    t     in [0, 100]             : the tolerance threshold
+    ratio in ]0, 1[ (default 0.5) : the proportion of the first population
+
     """)
 else:
     printMap(map)
     print("The execution will stop if there is no more migrations\n")
     input("Press any key to start")
-    # num_iter = 0
-    # while(num_iter < 400):
-    #     for i in range(len(map)):
-    #         for j in range(len(map[0])):
-    #             if (satisfiability(map, i, j) < threshold):
-    #                 (x, y) = findEmptySpace(map)
-    #                 type = map[i, j]
-    #                 map[i, j] = 0
-    #                 map[x, y] = type
-    #     printMap(map)
-    #     #if (num_switches == 0):
-    #         #break
+
     while(True):
         num_switches = 0
         for i in range(len(map)):
